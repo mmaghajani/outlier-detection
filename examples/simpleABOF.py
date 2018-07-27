@@ -1,11 +1,9 @@
 # TODO we do not check if center and a and b are in a line
-import random
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-train_url = "./data_in/Book1.csv"
+train_url = "./data_in/global.csv"
 train = pd.read_csv(train_url, delimiter=',', header=None)
 train = train.sample(frac=1)
 ytrain = train.iloc[:, -1]
@@ -24,28 +22,6 @@ def sample(record_number, train):
     normal = normal[:record_number - 10]
     data = pd.concat([outliers, normal])
     return pd.DataFrame(data)
-
-
-def hash_train(train, hash_rate):
-    hashed_train = []
-    print(train.shape[0], train.shape[1])
-    for i in range(0, hash_rate):
-        random_vector = []
-        for j in range(0, train.shape[1]):
-            random_vector.append(random.randint(-1, 1))
-        hashed_train.append([])
-        for index, record in train.iterrows():
-            dotted = np.dot(record, random_vector)
-            if dotted >= 0:
-                hashed_train[i].append(1)
-            else:
-                hashed_train[i].append(-1)
-    print("width1 ", len(hashed_train))
-    print("height1 ", len(hashed_train[0]))
-    hashed_train = list(map(list, zip(*hashed_train)))
-    print("width ", len(hashed_train))
-    print("height", len(hashed_train[0]))
-    return pd.DataFrame(hashed_train)
 
 
 def getABOF(vertex, a, b):
@@ -105,11 +81,10 @@ def get_ROC(train):
     return tpr_list, fpr_list
 
 
-train_temp = sample(100, train)
-print(train_temp)
-train = hash_train(train_temp, 20)
-train.to_csv("./data_out/hash_train.csv", index=False)
-
+# train = hash_train(train_temp, 20)
+# train.to_csv("hash_train.csv", index=False)
+train = sample(100, train)
+print(train)
 varABOF = []
 varAvg = []
 varModABOF = []

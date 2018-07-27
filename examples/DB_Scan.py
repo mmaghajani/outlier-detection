@@ -1,10 +1,8 @@
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from modules import dimension_reduction as dim_red
 from modules import clustering as cluster
 from modules import evaluation as eval
-import pprint
 from mlxtend.evaluate import confusion_matrix
 
 
