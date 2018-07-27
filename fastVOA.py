@@ -4,29 +4,7 @@ import matplotlib.pyplot as plt
 from modules import dimension_reduction as dim_red
 from modules import clustering as cluster
 from modules import evaluation as eval
-
-
-def sample(record_number, train):
-    origin_train = train
-    origin_train["label"] = ytrain
-    outliers = origin_train[origin_train["label"] == 1]
-    normal = origin_train[origin_train["label"] == 0]
-    outliers = outliers.sample(frac=1)
-    outliers = outliers[:10]
-    normal = normal[:record_number - 10]
-    data = pd.concat([outliers, normal])
-    return pd.DataFrame(data)
-
-
-def plot(axisX, axisY, list1, list2, color, list12=[], list22=[], color2=None):
-    if list12 is not []:
-        plt.plot(list1, list2, color + 'o', list12, list22, color2 + 's')
-        plt.axis([0, axisX, 0, axisY])
-        plt.show()
-    else:
-        plt.plot(list1, list2, color + 'o')
-        plt.axis([0, axisX, 0, axisY])
-        plt.show()
+from modules import utils
 
 
 # 0. Data loading
@@ -49,6 +27,6 @@ train["label"] = ytrain
 # 3. Evaluation
 roc = eval.get_ROC(train)
 t = np.arange(0., 5., 0.01)
-plot(1, 1, roc[1], roc[0], 'b', t, t, 'r')
+utils.plot(1, 1, roc[1], roc[0], 'b', t, t, 'r')
 
 print("finish")

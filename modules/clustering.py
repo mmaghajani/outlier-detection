@@ -3,6 +3,10 @@ from operator import add
 import math
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import LocalOutlierFactor
+from PyNomaly import loop
+from sklearn.svm import OneClassSVM
+
 
 def __first_moment_estimator(projected, t, n):
     f1 = [0] * n
@@ -72,3 +76,26 @@ def DB_Scan(S, eps, min_samples):
     X = np.array(S)
     clusters = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
     return clusters.labels_
+
+
+def LOF(S, n_neighbors):
+    X = np.array(S)
+    clusters = LocalOutlierFactor(n_neighbors=n_neighbors).fit_predict(X)
+    return clusters
+
+
+def loOP(S, n_neighbours):
+    X = np.array(S)
+    m = loop.LocalOutlierProbability(X, extent=0.95, n_neighbors=n_neighbours).fit()
+    scores = m.local_outlier_probabilities
+    for i in scores:
+        print(i)
+    return scores
+
+
+def SVM(S):
+    X = np.array(S)
+    clf = OneClassSVM(kernel='linear', random_state=0)
+    clf.fit(X)
+    clusters = clf.predict(X)
+    return clusters
