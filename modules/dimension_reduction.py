@@ -1,5 +1,7 @@
 import random
 import numpy as np
+from sklearn.decomposition import PCA
+import pandas as pd
 
 
 def random_projection(S, t):
@@ -31,3 +33,10 @@ def prepare_projected_data(projected, t):
         result.append(l)
     result = list(map(list, zip(*result)))
     return result
+
+
+def pca(S, t):
+    pca = PCA(n_components=t)
+    X = np.array(S)
+    pca.fit(X)
+    return pd.DataFrame(pca.transform(X))
