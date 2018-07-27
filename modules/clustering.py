@@ -3,6 +3,8 @@ from operator import add
 import math
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import LocalOutlierFactor
+
 
 def __first_moment_estimator(projected, t, n):
     f1 = [0] * n
@@ -71,4 +73,10 @@ def k_means(S):
 def DB_Scan(S, eps, min_samples):
     X = np.array(S)
     clusters = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
+    return clusters.labels_
+
+
+def LOF(S, n_neighbors):
+    X = np.array(S)
+    clusters = LocalOutlierFactor(n_neighbors=n_neighbors).fit_predict(X)
     return clusters.labels_
