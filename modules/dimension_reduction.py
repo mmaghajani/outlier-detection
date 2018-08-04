@@ -2,6 +2,7 @@ import random
 import numpy as np
 from sklearn.decomposition import PCA
 import pandas as pd
+from sklearn.decomposition import TruncatedSVD
 
 
 def random_projection(S, t):
@@ -39,4 +40,13 @@ def pca(S, t):
     pca = PCA(n_components=t)
     X = np.array(S)
     pca.fit(X)
+    print(" Ehsan : ", pca.explained_variance_ratio_.cumsum())
     return pd.DataFrame(pca.transform(X))
+
+
+def SVD(S, t):
+    svd = TruncatedSVD(n_components=t)
+    X = np.array(S)
+    svd.fit(X)
+    print(" Ehsan : ", svd.explained_variance_ratio_.cumsum())
+    return pd.DataFrame(svd.transform(X))

@@ -167,8 +167,8 @@ def crossover_and_offspring(parents):
     while i < len(parents):
         # problem object generates child from parents
         child = crossover(parents[i], parents[i + 1])
+        child.fitness = objective_function(child)
         offspring.append(child)
-        child.setFitness(objective_function(child))
         i += 2
     return offspring
 

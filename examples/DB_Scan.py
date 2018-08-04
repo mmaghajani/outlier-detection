@@ -13,10 +13,10 @@ ytrain = train.iloc[:, -1]
 train = train[:-1]
 print("data is loaded")
 
-T = 10
+T = 7
 # 1. Dimension Reduction
 n = train.shape[0]
-projected = dim_red.pca(train, T)
+projected = dim_red.SVD(train, T)
 
 # 2. Clustering
 # new_projected = dim_red.prepare_projected_data(projected, T)
