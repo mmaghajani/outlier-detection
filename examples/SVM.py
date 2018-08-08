@@ -7,7 +7,7 @@ from mlxtend.evaluate import confusion_matrix
 
 
 # 0. Data loading
-train_url = "./data_in/ipsweep_normal.csv"
+train_url = "../data_in/ipsweep_normal.csv"
 train = pd.read_csv(train_url, delimiter=',', header=None)
 ytrain = train.iloc[:, -1]
 train = train[:-1]
@@ -16,11 +16,12 @@ print("data is loaded")
 T = 5
 # 1. Dimension Reduction
 n = train.shape[0]
-projected = dim_red.random_projection(train, T)
+projected = dim_red.SVD(train, T)
 
 # 2. Clustering
-new_projected = dim_red.prepare_projected_data(projected, T)
-train["predict"] = cluster.SVM(new_projected)
+# new_projected = dim_red.prepare_projected_data(projected, T)
+train["predict"] = cluster.SVM(projected)
+print(train["predict"])
 train["label"] = ytrain
 
 # 3. Evaluation

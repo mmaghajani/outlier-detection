@@ -71,3 +71,13 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+
+def compute_precision_recall_fscore(confusion_matrix):
+    tp = confusion_matrix[1][1]
+    fp = confusion_matrix[0][1]
+    fn = confusion_matrix[1][0]
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    fscore = (2 * precision * recall) / (precision + recall)
+    return precision, recall, fscore
