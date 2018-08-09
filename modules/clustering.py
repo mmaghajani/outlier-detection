@@ -127,21 +127,11 @@ def recursive(X, level, labels):
     #     return predict
 
 
-def k_means(S, labels):
+def k_means(S):
     level = 1
     X = np.array(S)
     predict = list()
-    # predict = recursive(X, level, labels)
-    # Y = np.array(S)
-    # predict = dict()
-    # mapping = dict()
-    # X = Y
-    # for i in range(len(Y)):
-    #     mapping.update({i: i})
-    #
-    # while step < 2:
     clusters = KMeans(n_clusters=10, n_jobs=4, random_state=0).fit(X)
-    #
     counter = dict()
     for label in clusters.labels_:
         if not label in counter.keys():
@@ -153,41 +143,8 @@ def k_means(S, labels):
             predict.append(1)
         else:
             predict.append(0)
-    #
-    #     max_count = 0
-    #     for label in clusters.labels_:
-    #         if counter[label] > max_count:
-    #             max_label = label
-    #             max_count = counter[label]
-    #     pivot_label = max_label
     print(counter)
-    #     for i in range(len(X)):
-    #         label = clusters.labels_[i]
-    #         if label != pivot_label:
-    #             if counter[label] < 10:
-    #                 predict.update({mapping[i]: 1})
-    #     X = list()
-    #
-    #     index = 0
-    #     for i in range(len(Y)):
-    #         if clusters.labels_[i] == pivot_label:
-    #             X.append(Y[i])
-    #             mapping.update({index: i})
-    #             index += 1
-    #     X = np.array(X)
-    #     step += 1
-    # result = list()
-    # for i in range(len(Y)):
-    #     if i in predict.keys():
-    #         result[i] = 1
-    #     else:
-    #         result[i] = 0
-    # result = list()
-    # for i in range(len(X)):
-    #     if i in predict:
-    #         result.append(1)
-    #     else:
-    #         result.append(0)
+
     return predict
 
 

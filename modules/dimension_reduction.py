@@ -40,7 +40,7 @@ def pca(S, t):
     pca = PCA(n_components=t)
     X = np.array(S)
     pca.fit(X)
-    print(" Ehsan : ", pca.explained_variance_ratio_.cumsum())
+    print(" Accumulative Variance Ratio : ", pca.explained_variance_ratio_.cumsum())
     return pd.DataFrame(pca.transform(X))
 
 
@@ -48,5 +48,5 @@ def SVD(S, t):
     svd = TruncatedSVD(n_components=t)
     X = np.array(S)
     svd.fit(X)
-    print(" Ehsan : ", svd.explained_variance_ratio_.cumsum())
+    print("  Accumulative Variance Ratio : ", svd.explained_variance_ratio_.cumsum())
     return pd.DataFrame(svd.transform(X))
