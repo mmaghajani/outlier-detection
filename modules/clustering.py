@@ -1,3 +1,5 @@
+import collections
+
 import numpy as np
 from operator import add
 import math
@@ -6,6 +8,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import LocalOutlierFactor
 from PyNomaly import loop
 from sklearn.svm import OneClassSVM
+from scipy.spatial.distance import euclidean
 
 
 def __first_moment_estimator(projected, t, n):
@@ -66,10 +69,126 @@ def fast_voa(projected, n, t, s1, s2):
     return var
 
 
-def k_means(S):
+def recursive(X, level, labels):
+    clusters = KMeans(n_clusters=20, n_jobs=4, random_state=0).fit(X)
+    predict = list()
+    counter = dict()
+    for label in clusters.labels_:
+        if not label in counter.keys():
+            counter.update({label: 0})
+        counter[label] += 1
+    print(counter)
+    for label in range(20):
+        if counter[label] < 3:
+            for i in range(len(X)):
+                if clusters.labels_[i] == label:
+                    predict.append(i)
+        elif counter[label] > 30 and level > 0:
+            subspace = list()
+            index = 0
+            mapping = dict()
+            for i in range(len(X)):
+                if clusters.labels_[i] == label:
+                    subspace.append(X[i])
+                    mapping.update({index: i})
+                    index += 1
+            subspace = np.array(subspace)
+            p = recursive(subspace, level-1, labels)
+            for inde in p:
+                predict.append(mapping[inde])
+    return predict
+    #     if counter[label] > max_count:
+    #         max_label = label
+    #         max_count = counter[label]
+    # pivot_label = max_label
+    # for i in range(len(X)):
+    #     label = clusters.labels_[i]
+    #     if label != pivot_label and counter[label] < 3:
+    #         predict.append(i)
+    #     if counter[label] == 768:
+    #         predict.append(i)
+    #     if counter[label] == 149:
+    #         predict.append(i)
+    # if level == 0:
+    #     return predict
+    # else:
+    #     subspace = list()
+    #     index = 0
+    #     mapping = dict()
+    #     for i in range(len(X)):
+    #         if clusters.labels_[i] == pivot_label:
+    #             subspace.append(X[i])
+    #             mapping.update({index: i})
+    #             index += 1
+    #     subspace = np.array(subspace)
+    #     p = recursive(subspace, level-1, labels)
+    #     for inde in p:
+    #         predict.append(mapping[inde])
+    #     return predict
+
+
+def k_means(S, labels):
+    level = 1
     X = np.array(S)
-    clusters = KMeans(n_clusters=2, random_state=0).fit(X)
-    return clusters.labels_
+    predict = list()
+    # predict = recursive(X, level, labels)
+    # Y = np.array(S)
+    # predict = dict()
+    # mapping = dict()
+    # X = Y
+    # for i in range(len(Y)):
+    #     mapping.update({i: i})
+    #
+    # while step < 2:
+    clusters = KMeans(n_clusters=10, n_jobs=4, random_state=0).fit(X)
+    #
+    counter = dict()
+    for label in clusters.labels_:
+        if not label in counter.keys():
+            counter.update({label: 0})
+        counter[label] += 1
+    for i in range(len(X)):
+        label = clusters.labels_[i]
+        if counter[label] < 50:
+            predict.append(1)
+        else:
+            predict.append(0)
+    #
+    #     max_count = 0
+    #     for label in clusters.labels_:
+    #         if counter[label] > max_count:
+    #             max_label = label
+    #             max_count = counter[label]
+    #     pivot_label = max_label
+    print(counter)
+    #     for i in range(len(X)):
+    #         label = clusters.labels_[i]
+    #         if label != pivot_label:
+    #             if counter[label] < 10:
+    #                 predict.update({mapping[i]: 1})
+    #     X = list()
+    #
+    #     index = 0
+    #     for i in range(len(Y)):
+    #         if clusters.labels_[i] == pivot_label:
+    #             X.append(Y[i])
+    #             mapping.update({index: i})
+    #             index += 1
+    #     X = np.array(X)
+    #     step += 1
+    # result = list()
+    # for i in range(len(Y)):
+    #     if i in predict.keys():
+    #         result[i] = 1
+    #     else:
+    #         result[i] = 0
+    # result = list()
+    # for i in range(len(X)):
+    #     if i in predict:
+    #         result.append(1)
+    #     else:
+    #         result.append(0)
+    return predict
 
 
 def DB_Scan(S, eps, min_samples):

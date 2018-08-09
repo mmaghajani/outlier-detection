@@ -9,19 +9,19 @@ from mlxtend.evaluate import confusion_matrix
 
 
 # 0. Data loading
-train_url = '../data_in/portsweep_normal.csv'
+train_url = '../data_in/global.csv'
 train = pd.read_csv(train_url, delimiter=',', header=None)
 ytrain = train.iloc[:, -1]
 train = train[:-1]
 print("data is loaded")
 
-T = 3
+T = 60
 # 1. Dimension Reduction
 n = train.shape[0]
 projected = dim_red.pca(train, T)
 
 # 2. Clustering
-train["predict"] = cluster.k_means(projected)
+train["predict"] = cluster.k_means(projected, ytrain)
 train["label"] = ytrain
 
 # 3. Evaluation
