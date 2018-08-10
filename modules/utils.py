@@ -2,16 +2,23 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def sample(record_number, train):
-    ytrain = train.iloc[:, -1]
-    origin_train = train
-    origin_train["label"] = ytrain
-    outliers = origin_train[origin_train["label"] == 1]
-    normal = origin_train[origin_train["label"] == 0]
+def sample(data_proportion, train):
+    data_size = int(len(train) * data_proportion)
+
+    outliers = train[train["label"] == 1]
+    normal = train[train["label"] == 0]
     outliers = outliers.sample(frac=1)
-    outliers = outliers[:10]
-    normal = normal[:record_number - 10]
+    normal = normal.sample(frac=1)
+    if len(outliers) < 10:
+        normal = normal[:data_size-len(outliers)]
+    else:
+        normal_data_size = int(len(normal)*data_proportion)
+        outlier_data_size = int(len(outliers)*data_proportion)
+        normal = normal[:normal_data_size]
+        outliers = outliers[:outlier_data_size]
+
     data = pd.concat([outliers, normal])
+    data = data.sample(frac=1)
     return pd.DataFrame(data)
 
 
