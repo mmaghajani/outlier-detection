@@ -7,21 +7,19 @@ from mlxtend.evaluate import confusion_matrix
 
 
 # 0. Data loading
-train_url = "./data_in/r2l.csv"
+train_url = "./data_in/global.csv"
 train = pd.read_csv(train_url, delimiter=',', header=None)
 ytrain = train.iloc[:, -1]
 # print(train)
 print("data is loaded")
 
-T = 7
+T = 15
 # 1. Dimension Reduction
 n = train.shape[0]
 projected = dim_red.SVD(train, T)
-# print(projected)
 
 # 2. Clustering
-# new_projected = dim_red.prepare_projected_data(projected, T)
-predict = cluster.LOF(projected, 20)
+predict = cluster.LOF(projected, 10)
 for i in range(len(predict)):
     if predict[i] == -1:
         predict[i] = 1
@@ -33,6 +31,10 @@ train["label"] = ytrain
 # 3. Evaluation
 classes = [0, 1]
 confusion_matrix_all = confusion_matrix(train["label"], train["predict"], binary=True)
+precision, recall, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
+print("Precision : ", precision)
+print("Recall    : ", recall)
+print("FScore    : ", fscore)
 plt.figure()
 eval.plot_confusion_matrix(confusion_matrix_all, classes, normalize=False)
 plt.show()
