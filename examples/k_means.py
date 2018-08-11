@@ -2,7 +2,6 @@ from distutils.command.config import config
 import warnings
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-import pandas as pd
 import matplotlib.pyplot as plt
 from modules import dimension_reduction as dim_red
 from modules import clustering as cluster
@@ -18,11 +17,7 @@ OUTLIER_CLUSTER_SIZE_LIMIT_RANGE = range(40, 60)
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
-train_url = '../data_in/global.csv'
-train = pd.read_csv(train_url, delimiter=',', header=None)
-ytrain = train.iloc[:, -1]
-train = train[:-1]
-print("data is loaded")
+train, ytrain = utils.load_train_data('../data_in/global.csv')
 
 # 1. Dimension Reduction
 T = DIMENSION

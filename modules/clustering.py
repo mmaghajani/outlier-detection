@@ -162,10 +162,16 @@ def DB_Scan(S, eps, min_samples):
     return predict
 
 
-def LOF(S, n_neighbors):
+def LOF(S, n_neighbors, contamination):
     X = np.array(S)
-    clusters = LocalOutlierFactor(n_neighbors=n_neighbors).fit_predict(X)
-    return clusters
+    clusters = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination).fit_predict(X)
+    predict = clusters
+    for i in range(len(predict)):
+        if predict[i] == -1:
+            predict[i] = 1
+        else:
+            predict[i] = 0
+    return predict
 
 
 def loOP(S, n_neighbours):

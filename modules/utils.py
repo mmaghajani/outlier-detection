@@ -2,6 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+def load_train_data(train_url):
+    train = pd.read_csv(train_url, delimiter=',', header=None)
+    ytrain = train.iloc[:, -1]
+    train = train.drop(columns=[train.shape[1] - 1])
+    print("Data Is Loaded\n", "==============================\n")
+    return train, ytrain
+
+
 def sample(data_proportion, train):
     data_size = int(len(train) * data_proportion)
 

@@ -20,11 +20,7 @@ MIN_SAMPLE_SEARCH_RANGE = range(1, 50)
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
-train_url = "./data_in/global.csv"
-train = pd.read_csv(train_url, delimiter=',', header=None)
-ytrain = train.iloc[:, -1]
-train = train.drop(columns=[train.shape[1] - 1])
-print("Data Is Loaded\n", SEPARATOR)
+train, ytrain = utils.load_train_data('../data_in/global.csv')
 
 # 1. Dimension Reduction
 T = DIMENSION
