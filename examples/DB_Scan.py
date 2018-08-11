@@ -44,13 +44,6 @@ while eps < EPS_SEARCH_RANGE[1]:
     for min_samples in MIN_SAMPLE_SEARCH_RANGE:
         temp_sample = copy.deepcopy(sample)
         predict = cluster.DB_Scan(temp_sample, eps, min_samples)
-        index = 0
-        for i in predict:
-            if i < 0:
-                predict[index] = 1
-            else:
-                predict[index] = 0
-            index += 1
         temp_sample["predict"] = predict
         temp_sample["label"] = sample_label
         classes = [0, 1]
@@ -66,14 +59,6 @@ print("Parameter Tuning Completed => best eps : ", best_eps,
 
 # 3. Clustering
 predict = cluster.DB_Scan(projected, best_eps, best_min_samples)
-index = 0
-for i in predict:
-    if i < 0:
-        predict[index] = 1
-    else:
-        predict[index] = 0
-    index += 1
-
 train["predict"] = predict
 train["label"] = ytrain
 
