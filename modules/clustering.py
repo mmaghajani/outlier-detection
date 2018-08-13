@@ -8,6 +8,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import LocalOutlierFactor
 from PyNomaly import loop
 from sklearn.svm import OneClassSVM
+from sklearn.ensemble import IsolationForest
 from scipy.spatial.distance import euclidean
 
 
@@ -193,4 +194,18 @@ def SVM(S, nu):
             clusters[i] = 1
         else:
             clusters[i] = 0
+    return clusters
+
+
+def isolation_forest(S, contamination):
+    X = np.array(S)
+    clf = IsolationForest(contamination=contamination)
+    clf.fit(X)
+    clusters = clf.predict(X)
+    for i in range(len(clusters)):
+        if clusters[i] == -1:
+            clusters[i] = 1
+        else:
+            clusters[i] = 0
+    print(clusters)
     return clusters
