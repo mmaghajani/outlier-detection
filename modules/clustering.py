@@ -183,9 +183,14 @@ def loOP(S, n_neighbours):
     return scores
 
 
-def SVM(S):
+def SVM(S, nu):
     X = np.array(S)
-    clf = OneClassSVM(kernel='linear', random_state=0)
+    clf = OneClassSVM(kernel='linear', random_state=0, nu=nu)
     clf.fit(X)
     clusters = clf.predict(X)
+    for i in range(len(clusters)):
+        if clusters[i] == -1:
+            clusters[i] = 1
+        else:
+            clusters[i] = 0
     return clusters
