@@ -127,11 +127,11 @@ def recursive(X, level, labels):
     #     return predict
 
 
-def k_means(S):
-    level = 1
+def k_means(S, n_clusters, outlier_cluster_size_limit):
+    # level = 1
     X = np.array(S)
     predict = list()
-    clusters = KMeans(n_clusters=10, n_jobs=4, random_state=0).fit(X)
+    clusters = KMeans(n_clusters=n_clusters, n_jobs=4, random_state=0).fit(X)
     counter = dict()
     for label in clusters.labels_:
         if not label in counter.keys():
@@ -139,11 +139,11 @@ def k_means(S):
         counter[label] += 1
     for i in range(len(X)):
         label = clusters.labels_[i]
-        if counter[label] < 50:
+        if counter[label] < outlier_cluster_size_limit :
             predict.append(1)
         else:
             predict.append(0)
-    print(counter)
+    # print(counter)
 
     return predict
 
@@ -151,13 +151,27 @@ def k_means(S):
 def DB_Scan(S, eps, min_samples):
     X = np.array(S)
     clusters = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
-    return clusters.labels_
+    predict = clusters.labels_
+    index = 0
+    for i in predict:
+        if i < 0:
+            predict[index] = 1
+        else:
+            predict[index] = 0
+        index += 1
+    return predict
 
 
-def LOF(S, n_neighbors):
+def LOF(S, n_neighbors, contamination):
     X = np.array(S)
-    clusters = LocalOutlierFactor(n_neighbors=n_neighbors).fit_predict(X)
-    return clusters
+    clusters = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=contamination).fit_predict(X)
+    predict = clusters
+    for i in range(len(predict)):
+        if predict[i] == -1:
+            predict[i] = 1
+        else:
+            predict[i] = 0
+    return predict
 
 
 def loOP(S, n_neighbours):
@@ -169,9 +183,14 @@ def loOP(S, n_neighbours):
     return scores
 
 
-def SVM(S):
+def SVM(S, nu):
     X = np.array(S)
-    clf = OneClassSVM(kernel='linear', random_state=0)
+    clf = OneClassSVM(kernel='linear', random_state=0, nu=nu)
     clf.fit(X)
     clusters = clf.predict(X)
+    for i in range(len(clusters)):
+        if clusters[i] == -1:
+            clusters[i] = 1
+        else:
+            clusters[i] = 0
     return clusters
