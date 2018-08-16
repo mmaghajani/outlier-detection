@@ -9,14 +9,14 @@ from modules import evaluation as eval
 from mlxtend.evaluate import confusion_matrix
 from modules import utils
 
-DIMENSION = 7
+DIMENSION = 30
 SAMPLE_RATE = 0.1
 CONTAMINATION = [0.001, 0.002, 0.003, 0.004, 0.005, 0.008,  0.01, 0.02, 0.03, 0.05, 0.08, 0.1, 0.12, 0.15, 0.2]
 N_NEIGHBOURS_SEARCH_RANGE = range(1, 20)
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
-train, ytrain = utils.load_train_data('../data_in/global.csv')
+train, ytrain = utils.load_train_data('../data_in/KDDTest2.csv')
 
 # 1. Dimension Reduction
 T = DIMENSION
