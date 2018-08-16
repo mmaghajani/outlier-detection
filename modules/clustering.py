@@ -8,6 +8,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.neighbors import LocalOutlierFactor
 from PyNomaly import loop
 from sklearn.svm import OneClassSVM
+from sklearn.ensemble import IsolationForest
 from scipy.spatial.distance import euclidean
 
 
@@ -152,13 +153,11 @@ def DB_Scan(S, eps, min_samples):
     X = np.array(S)
     clusters = DBSCAN(eps=eps, min_samples=min_samples).fit(X)
     predict = clusters.labels_
-    index = 0
-    for i in predict:
-        if i < 0:
-            predict[index] = 1
+    for i in range(len(predict)):
+        if predict[i] < 0:
+            predict[i] = 1
         else:
-            predict[index] = 0
-        index += 1
+            predict[i] = 0
     return predict
 
 
@@ -186,6 +185,19 @@ def loOP(S, n_neighbours):
 def SVM(S, nu):
     X = np.array(S)
     clf = OneClassSVM(kernel='linear', random_state=0, nu=nu)
+    clf.fit(X)
+    clusters = clf.predict(X)
+    for i in range(len(clusters)):
+        if clusters[i] == -1:
+            clusters[i] = 1
+        else:
+            clusters[i] = 0
+    return clusters
+
+
+def isolation_forest(S, contamination):
+    X = np.array(S)
+    clf = IsolationForest(contamination=contamination, n_estimators=20)
     clf.fit(X)
     clusters = clf.predict(X)
     for i in range(len(clusters)):

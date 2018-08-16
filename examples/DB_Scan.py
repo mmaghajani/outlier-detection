@@ -13,14 +13,14 @@ from modules import utils
 
 
 DIMENSION = 7
-SAMPLE_RATE = 0.1
-EPS_SEARCH_RANGE = (0.5, 20)
+SAMPLE_RATE = 0.05
+EPS_SEARCH_RANGE = (0.5, 15)
 EPS_STEP = 0.5
-MIN_SAMPLE_SEARCH_RANGE = range(1, 50)
+MIN_SAMPLE_SEARCH_RANGE = range(1, 20)
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
-train, ytrain = utils.load_train_data('../data_in/global.csv')
+train, ytrain = utils.load_train_data('../data_in/r2l.csv')
 
 # 1. Dimension Reduction
 T = DIMENSION
