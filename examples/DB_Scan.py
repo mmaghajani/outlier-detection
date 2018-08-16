@@ -3,14 +3,9 @@ import warnings
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 
 import copy
-import pandas as pd
 import matplotlib.pyplot as plt
-from modules import dimension_reduction as dim_red
-from modules import clustering as cluster
-from modules import evaluation as eval
 from mlxtend.evaluate import confusion_matrix
-from modules import utils
-
+from examples.modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
 
 DIMENSION = 7
 SAMPLE_RATE = 0.05

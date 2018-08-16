@@ -2,11 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def load_train_data(train_url):
+def load_train_data(train_url, is_product):
     train = pd.read_csv(train_url, delimiter=',', header=None)
     ytrain = train.iloc[:, -1]
     train = train.drop(columns=[train.shape[1] - 1])
-    print("Data Is Loaded\n", "==============================\n")
+    if not is_product:
+        print("Data Is Loaded\n", "==============================\n")
     return train, ytrain
 
 

@@ -1,13 +1,19 @@
+#!/usr/bin/env python3
 import copy
 import warnings
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 import matplotlib.pyplot as plt
-from modules import dimension_reduction as dim_red
-from modules import clustering as cluster
-from modules import evaluation as eval
 from mlxtend.evaluate import confusion_matrix
-from modules import utils
+from modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
+import sys
+
+try:
+    path = sys.argv[1]
+except IndexError:
+    is_product = False
+else:
+    is_product = True
 
 DIMENSION = 30
 SAMPLE_RATE = 0.1
@@ -16,12 +22,15 @@ N_NEIGHBOURS_SEARCH_RANGE = range(1, 20)
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
-train, ytrain = utils.load_train_data('../data_in/KDDTest2.csv')
+if is_product:
+    train, ytrain = utils.load_train_data(path, is_product)
+else:
+    train, ytrain = utils.load_train_data('../data_in/ipsweep_normal.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
 n = train.shape[0]
-projected = dim_red.SVD(train, T)
+projected = dim_red.SVD(train, T, is_product)
 
 # 2. parameter tuning
 temp = copy.deepcopy(projected)
@@ -42,21 +51,25 @@ for contamination in CONTAMINATION:
         fscore_max = fscore
         best_contamination = contamination
 
-print("Parameter Tuning Completed => best contamination : ", best_contamination, "\n", SEPARATOR)
+if not is_product:
+    print("Parameter Tuning Completed => best contamination : ", best_contamination, "\n", SEPARATOR)
 
 # 2. Clustering
 train["predict"] = cluster.isolation_forest(projected, best_contamination)
 train["label"] = ytrain
 
 # 3. Evaluation
-classes = [0, 1]
-confusion_matrix_all = confusion_matrix(train["label"], train["predict"], binary=True)
-precision, recall, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
-print("Precision : ", precision)
-print("Recall    : ", recall)
-print("FScore    : ", fscore)
-plt.figure()
-eval.plot_confusion_matrix(confusion_matrix_all, classes, normalize=False)
-plt.show()
-
-print("finish")
+if is_product:
+    for i in train["predict"]:
+        print(i)
+else:
+    classes = [0, 1]
+    confusion_matrix_all = confusion_matrix(train["label"], train["predict"], binary=True)
+    precision, recall, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
+    print("Precision : ", precision)
+    print("Recall    : ", recall)
+    print("FScore    : ", fscore)
+    plt.figure()
+    eval.plot_confusion_matrix(confusion_matrix_all, classes, normalize=False)
+    plt.show()
+    print("finish")

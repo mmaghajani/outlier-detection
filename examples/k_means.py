@@ -1,13 +1,9 @@
-from distutils.command.config import config
 import warnings
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 import matplotlib.pyplot as plt
-from modules import dimension_reduction as dim_red
-from modules import clustering as cluster
-from modules import evaluation as eval
 from mlxtend.evaluate import confusion_matrix
-from modules import utils
+from examples.modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
 import copy
 
 DIMENSION = 7

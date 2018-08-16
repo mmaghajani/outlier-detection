@@ -36,17 +36,19 @@ def prepare_projected_data(projected, t):
     return result
 
 
-def pca(S, t):
+def pca(S, t, is_product):
     pca = PCA(n_components=t)
     X = np.array(S)
     pca.fit(X)
-    print("Accumulative Variance Ratio : ", pca.explained_variance_ratio_.cumsum())
+    if not is_product:
+        print("Accumulative Variance Ratio : ", pca.explained_variance_ratio_.cumsum())
     return pd.DataFrame(pca.transform(X))
 
 
-def SVD(S, t):
+def SVD(S, t, is_product):
     svd = TruncatedSVD(n_components=t)
     X = np.array(S)
     svd.fit(X)
-    print("Accumulative Variance Ratio : ", svd.explained_variance_ratio_.cumsum())
+    if not is_product:
+        print("Accumulative Variance Ratio : ", svd.explained_variance_ratio_.cumsum())
     return pd.DataFrame(svd.transform(X))
