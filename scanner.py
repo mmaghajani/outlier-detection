@@ -8,6 +8,7 @@ warnings.filterwarnings("ignore", message="Using a non-tuple sequence")
 import sys
 import subprocess
 import threading
+import traceback
 
 LOFR = ''
 FAST_VOA = ''
@@ -53,10 +54,6 @@ thread3.start()
 thread4 = threading.Thread(target=SVM, )
 thread4.start()
 
-thread1.join()
-thread2.join()
-thread3.join()
-thread4.join()
 
 for i in range(len(SVMR)):
     score = 0
@@ -67,12 +64,11 @@ for i in range(len(SVMR)):
     if float(LOFR[i]) > 0.90:
         score += 1
     if float(FAST_VOA[i]) > 0.90:
-        score += 2
-
-    if score == 2:
-        print("#1#" + str(i) + "#" + ISOLATION_FOREST[i] + "#" + FAST_VOA[i] +
+        score += 1.5
+    if score > 2.5:
+        print("#2#" + str(i) + "#" + ISOLATION_FOREST[i] + "#" + FAST_VOA[i] +
               "#" + LOFR[i] + "#" + SVMR[i] + "#")
     elif score > 2:
-        print("#2#" + str(i) + "#" + ISOLATION_FOREST[i] + "#" + FAST_VOA[i] +
+        print("#1#" + str(i) + "#" + ISOLATION_FOREST[i] + "#" + FAST_VOA[i] +
               "#" + LOFR[i] + "#" + SVMR[i] + "#")
 

@@ -206,3 +206,11 @@ def isolation_forest(S, contamination):
         else:
             clusters[i] = 0
     return clusters
+
+
+def isolation_forest_score(S, contamination):
+    X = np.array(S)
+    clf = IsolationForest(contamination=contamination, n_estimators=20)
+    clf.fit(X)
+    rate = clf.decision_function(X)
+    return rate

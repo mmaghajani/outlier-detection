@@ -30,7 +30,7 @@ SEPARATOR = "==============================\n"
 if is_product:
     train, ytrain = utils.load_train_data(path, is_product)
 else:
-    train, ytrain = utils.load_train_data('./data_in/local.csv', is_product)
+    train, ytrain = utils.load_train_data('./data_in/global.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
@@ -38,27 +38,30 @@ n = train.shape[0]
 projected = dim_red.SVD(train, T, is_product)
 
 # 2. parameter tuning
-temp = copy.deepcopy(projected)
-temp["label"] = ytrain
-sample = utils.sample(SAMPLE_RATE, temp)
-sample_label = sample.iloc[:, -1]
-sample = sample.drop(columns=['label'])
-fscore_max = 0
-for contamination in CONTAMINATION:
-    for n_neighbours_samples in N_NEIGHBOURS_SEARCH_RANGE:
-        temp_sample = copy.deepcopy(sample)
-        predict = cluster.LOF(temp_sample, n_neighbours_samples, contamination)
-        temp_sample["predict"] = predict
-        temp_sample["label"] = sample_label
-        classes = [0, 1]
-        confusion_matrix_all = confusion_matrix(temp_sample["label"], temp_sample["predict"], binary=True)
-        _, _, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
-        if fscore > fscore_max:
-            fscore_max = fscore
-            best_n_neighbours_samples = n_neighbours_samples
-            best_contamination = contamination
+if is_product:
+    best_contamination = 0.15
+    best_n_neighbours_samples = 2
+else:
+    temp = copy.deepcopy(projected)
+    temp["label"] = ytrain
+    sample = utils.sample(SAMPLE_RATE, temp)
+    sample_label = sample.iloc[:, -1]
+    sample = sample.drop(columns=['label'])
+    fscore_max = 0
+    for contamination in CONTAMINATION:
+        for n_neighbours_samples in N_NEIGHBOURS_SEARCH_RANGE:
+            temp_sample = copy.deepcopy(sample)
+            predict = cluster.LOF(temp_sample, n_neighbours_samples, contamination)
+            temp_sample["predict"] = predict
+            temp_sample["label"] = sample_label
+            classes = [0, 1]
+            confusion_matrix_all = confusion_matrix(temp_sample["label"], temp_sample["predict"], binary=True)
+            _, _, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
+            if fscore > fscore_max:
+                fscore_max = fscore
+                best_n_neighbours_samples = n_neighbours_samples
+                best_contamination = contamination
 
-if not is_product:
     print("Parameter Tuning Completed => best n neighbour : ", best_n_neighbours_samples,
           "best contamination : ", best_contamination, "\n", SEPARATOR)
 

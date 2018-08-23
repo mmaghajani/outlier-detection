@@ -23,7 +23,7 @@ else:
 if is_product:
     train, ytrain = utils.load_train_data(path, is_product)
 else:
-    train, ytrain = utils.load_train_data('../data_in/ipsweep_normal.csv', is_product)
+    train, ytrain = utils.load_train_data('../data_in/global.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
@@ -42,7 +42,9 @@ if is_product:
     for i in range(len(scores)):
         scores[i] = scores[i] / max
     for i in scores:
-        print(i)
+        x = i*1000
+        x = int(x)
+        print(x/1000)
 else:
     roc = eval.get_ROC(train)
     t = np.arange(0., 5., 0.01)
