@@ -208,9 +208,11 @@ def isolation_forest(S, contamination):
     return clusters
 
 
-def isolation_forest_score(S, contamination):
+def isolation_forest_score(S):
     X = np.array(S)
-    clf = IsolationForest(contamination=contamination, n_estimators=20)
+    clf = IsolationForest()
     clf.fit(X)
     rate = clf.decision_function(X)
+    for i in range(len(rate)):
+        rate[i] = -1 * rate[i]
     return rate
