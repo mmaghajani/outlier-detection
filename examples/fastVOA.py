@@ -1,15 +1,18 @@
 #!/usr/bin/env python3 -W ignore::DeprecationWarning
 import warnings
+
+from sklearn.metrics import roc_auc_score
+
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=DeprecationWarning)
 warnings.filterwarnings("ignore", message="Using a non-tuple sequence")
 import numpy as np
 import pandas as pd
-from modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
+from examples.modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
 import sys
 
-DIMENSION = 5
+DIMENSION = 20
 
 try:
     path = sys.argv[1]
@@ -23,7 +26,7 @@ else:
 if is_product:
     train, ytrain = utils.load_train_data(path, is_product)
 else:
-    train, ytrain = utils.load_train_data('../data_in/global.csv', is_product)
+    train, ytrain = utils.load_train_data('../data_in/r2l.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
@@ -31,7 +34,7 @@ n = train.shape[0]
 projected = dim_red.random_projection(train, T)
 
 # 2. Clustering
-train["rate"] = cluster.fast_voa(projected, n, T, 5, 5)
+train["rate"] = cluster.fast_voa(projected, n, T, 1, 1)
 train["label"] = ytrain
 
 # 3. Evaluation
@@ -46,8 +49,14 @@ if is_product:
         x = int(x)
         print(x/1000)
 else:
-    roc = eval.get_ROC(train)
-    t = np.arange(0., 5., 0.01)
-    utils.plot(1, 1, roc[1], roc[0], 'b', t, t, 'r')
+    scores = train["rate"]
+    scores = list(map(lambda x: float(x), scores))
+    max = max(scores)
+    for i in range(len(scores)):
+        scores[i] = scores[i] / max
+        # scores[i] = scores[i] * 1000
+        # scores[i] = int(scores[i])
+        # scores[i] = scores[i] / 1000
 
+    print("AUC score : ", roc_auc_score(ytrain, scores))
     print("finish")
