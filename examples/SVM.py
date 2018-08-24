@@ -1,5 +1,8 @@
 #!/usr/bin/env python3 -W ignore::DeprecationWarning
 import warnings
+
+from sklearn.metrics import roc_auc_score
+
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=DeprecationWarning)
@@ -18,10 +21,7 @@ except IndexError:
 else:
     is_product = True
 
-DIMENSION = 7
-SAMPLE_RATE = 0.1
-NU_SEARCH_RANGE = (0.01, 0.99)
-NU_SEARCH_STEP = 0.1
+DIMENSION = 3
 SEPARATOR = "==============================\n"
 
 # 0. Data loading
@@ -35,48 +35,16 @@ T = DIMENSION
 n = train.shape[0]
 projected = dim_red.SVD(train, T, is_product)
 
-# 2. parameter tuning
-if is_product:
-    best_nu = 0.11
-else:
-    temp = copy.deepcopy(projected)
-    temp["label"] = ytrain
-    sample = utils.sample(SAMPLE_RATE, temp)
-    sample_label = sample.iloc[:, -1]
-    sample = sample.drop(columns=['label'])
-    fscore_max = 0
-    nu = NU_SEARCH_RANGE[0]
-    while nu < NU_SEARCH_RANGE[1]:
-        temp_sample = copy.deepcopy(sample)
-        predict = cluster.SVM(temp_sample, nu)
-        temp_sample["predict"] = predict
-        temp_sample["label"] = sample_label
-        classes = [0, 1]
-        confusion_matrix_all = confusion_matrix(temp_sample["label"], temp_sample["predict"], binary=True)
-        _, _, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
-        if fscore > fscore_max:
-            fscore_max = fscore
-            best_nu = nu
-        nu += NU_SEARCH_STEP
-    print("Parameter Tuning Completed => best nu : ", best_nu, "\n", SEPARATOR)
-
 # 2. Clustering
-train["predict"] = cluster.SVM(projected, best_nu)
+train["rate"] = cluster.SVM_score(projected)
 train["label"] = ytrain
 
 # 3. Evaluation
 if is_product:
-    for i in train["predict"]:
+    for i in train["rate"]:
         print(i)
 else:
-    classes = [0, 1]
-    confusion_matrix_all = confusion_matrix(train["label"], train["predict"], binary=True)
-    precision, recall, fscore = eval.compute_precision_recall_fscore(confusion_matrix_all)
-    print("Precision : ", precision)
-    print("Recall    : ", recall)
-    print("FScore    : ", fscore)
-    plt.figure()
-    eval.plot_confusion_matrix(confusion_matrix_all, classes, normalize=False)
-    plt.show()
+    print("AUC score : ", roc_auc_score(ytrain, train["rate"]))
+    print("finish")
 
     print("finish")

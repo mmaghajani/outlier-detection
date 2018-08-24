@@ -173,6 +173,15 @@ def LOF(S, n_neighbors, contamination):
     return predict
 
 
+def LOF_score(S):
+    X = np.array(S)
+    clf = LocalOutlierFactor()
+    clf.fit(X)
+    factores = clf._decision_function(X)
+    print(factores)
+    return factores
+
+
 def loOP(S, n_neighbours):
     X = np.array(S)
     m = loop.LocalOutlierProbability(X, extent=0.95, n_neighbors=n_neighbours).fit()
@@ -193,6 +202,16 @@ def SVM(S, nu):
         else:
             clusters[i] = 0
     return clusters
+
+
+def SVM_score(S):
+    X = np.array(S)
+    clf = OneClassSVM(kernel='linear')
+    clf.fit(X)
+    scores = clf.decision_function(X)
+    for i in range(len(scores)):
+        scores[i] = -1 * scores[i]
+    return scores
 
 
 def isolation_forest(S, contamination):
