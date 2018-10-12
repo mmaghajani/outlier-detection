@@ -1,7 +1,7 @@
 #!/usr/bin/env python3 -W ignore::DeprecationWarning
 import warnings
 
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 with warnings.catch_warnings():
@@ -9,7 +9,7 @@ with warnings.catch_warnings():
 warnings.filterwarnings("ignore", message="Using a non-tuple sequence")
 import numpy as np
 import pandas as pd
-from examples.modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
+from modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
 import sys
 
 DIMENSION = 20
@@ -26,7 +26,7 @@ else:
 if is_product:
     train, ytrain = utils.load_train_data(path, is_product)
 else:
-    train, ytrain = utils.load_train_data('../data_in/r2l.csv', is_product)
+    train, ytrain = utils.load_train_data('../data_in/u2r.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
@@ -44,10 +44,7 @@ if is_product:
     max = max(scores)
     for i in range(len(scores)):
         scores[i] = scores[i] / max
-    for i in scores:
-        x = i*1000
-        x = int(x)
-        print(x/1000)
+        print(scores[i])
 else:
     scores = train["rate"]
     scores = list(map(lambda x: float(x), scores))
@@ -58,5 +55,8 @@ else:
         # scores[i] = int(scores[i])
         # scores[i] = scores[i] / 1000
 
+    fpr, tpr, threshold = roc_curve(ytrain, scores)
+    t = np.arange(0., 5., 0.001)
+    utils.plot(1, 1, fpr, tpr, 'b', t, t, 'r')
     print("AUC score : ", roc_auc_score(ytrain, scores))
     print("finish")

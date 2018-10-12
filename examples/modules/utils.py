@@ -33,10 +33,10 @@ def sample(data_proportion, train):
 
 def plot(axisX, axisY, list1, list2, color, list12=[], list22=[], color2=None):
     if list12 is not []:
-        plt.plot(list1, list2, color + 'o', list12, list22, color2 + 's')
+        plt.plot(list1, list2, color + 'o', list12, list22, color2 + 's', markersize=1, linewidth=3)
         plt.axis([0, axisX, 0, axisY])
         plt.show()
     else:
-        plt.plot(list1, list2, color + 'o')
+        plt.plot(list1, list2, color + 'o', markersize=1, linewidth=3)
         plt.axis([0, axisX, 0, axisY])
         plt.show()

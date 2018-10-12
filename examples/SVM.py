@@ -1,7 +1,8 @@
 #!/usr/bin/env python3 -W ignore::DeprecationWarning
 import warnings
 
-from sklearn.metrics import roc_auc_score
+import numpy as np
+from sklearn.metrics import roc_auc_score, roc_curve
 
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 with warnings.catch_warnings():
@@ -11,7 +12,7 @@ warnings.filterwarnings("ignore", message="Using a non-tuple sequence")
 import copy
 import matplotlib.pyplot as plt
 from mlxtend.evaluate import confusion_matrix
-from examples.modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
+from modules import utils, dimension_reduction as dim_red, evaluation as eval, clustering as cluster
 import sys
 
 try:
@@ -28,7 +29,7 @@ SEPARATOR = "==============================\n"
 if is_product:
     train, ytrain = utils.load_train_data(path, is_product)
 else:
-    train, ytrain = utils.load_train_data('../data_in/ipsweep_normal.csv', is_product)
+    train, ytrain = utils.load_train_data('../data_in/u2r.csv', is_product)
 
 # 1. Dimension Reduction
 T = DIMENSION
@@ -44,7 +45,9 @@ if is_product:
     for i in train["rate"]:
         print(i)
 else:
+    fpr, tpr, threshold = roc_curve(ytrain, train["rate"])
+    t = np.arange(0., 5., 0.001)
+    utils.plot(1, 1, fpr, tpr, 'b', t, t, 'r')
     print("AUC score : ", roc_auc_score(ytrain, train["rate"]))
     print("finish")
 
-    print("finish")

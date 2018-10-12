@@ -178,7 +178,8 @@ def LOF_score(S):
     clf = LocalOutlierFactor()
     clf.fit(X)
     factores = clf._decision_function(X)
-    print(factores)
+    for i in range(len(factores)):
+        factores[i] = -1 * factores[i]
     return factores
 
 
@@ -209,8 +210,14 @@ def SVM_score(S):
     clf = OneClassSVM(kernel='linear')
     clf.fit(X)
     scores = clf.decision_function(X)
+    min = 999999
+    max = -99999
     for i in range(len(scores)):
         scores[i] = -1 * scores[i]
+        if scores[i] < min:
+            min = scores[i]
+        if scores[i] > max:
+            max = scores[i]
     return scores
 
 
